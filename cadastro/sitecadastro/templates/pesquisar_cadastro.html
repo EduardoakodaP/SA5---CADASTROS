@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pesquisar Cadastros - GlobalTalent Connect</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+<style>
+  /* Estilos personalizados */
+  body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: #fff; /* Cor dos textos padrão */
+  }
+  h1 {
+    color: #fff;
+    text-align: center;
+    margin-top: 20px;
+  }
+  table {
+    background-color: rgba(255, 255, 255, 0.1); /* Fundo da tabela em preto */
+    border-collapse: collapse;
+    width: 100%;
+    color: #000; /* Texto dentro da tabela em preto */
+    margin-top: 20px;
+  }
+  th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #333;
+    color: #fff; /* Cor dos cabeçalhos da tabela em branco */
+  }
+  .acoes {
+    text-align: center;
+  }
+  .acoes a, .acoes button {
+    color: #fff;
+    background-color: #4CAF50;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 5px;
+    text-decoration: none;
+  }
+  .acoes button.deletar {
+    background-color: #f44336; 
+  }
+  /* Ajuste das cores para branco */
+  .dataTables_wrapper .dataTables_filter label,
+  .dataTables_wrapper .dataTables_info,
+  .dataTables_wrapper .dataTables_paginate .paginate_button,
+  .dataTables_wrapper .dataTables_length label {
+    color: #fff;
+  }
+  /* Ajuste para a caixa de pesquisa */
+  .dataTables_filter input {
+    background-color: #fff; /* Caixa de pesquisa em branco */
+    color: #fff; /* Texto da caixa de pesquisa em preto */
+  }
+  /* Ajuste para a caixa de seleção de entradas */
+  .dataTables_length select {
+    background-color: #000; /* Caixa de seleção de entradas em preto */
+    color: #fff; /* Texto da caixa de seleção de entradas em branco */
+  }
+  /* Ajuste para os botões de paginação */
+  .dataTables_wrapper .dataTables_paginate .paginate_button.current, 
+  .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #333;
+    color: #fff;
+  }
+  .update-button, .delete-button {
+    display: inline-block;
+  }
+  .delete-confirm-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    color: #000;
+    border-radius: 10px;
+    z-index: 9999;
+    display: none;
+    font-size: 18px;
+    text-align: center; /* Centralizar o texto */
+    border: 2px solid #000; /* Adiciona borda preta */
+  }
+  .delete-confirm-message .confirm-content {
+    padding: 10px; /* Adiciona espaço interno */
+  }
+  .delete-confirm-message button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  .delete-confirm-message button.yes {
+    background-color: green;
+    color: #fff;
+  }
+  .delete-confirm-message button.cancel {
+    background-color: red;
+    color: #fff;
+  }
+  .success-message {
+    background-color: green;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    margin-top: 20px;
+    display: none;
+    border-radius: 10px;
+  }
+</style>
+</head>
+<body class="w3-content" style="max-width:1300px">
+
+<h1>Pesquisar Cadastros</h1>
+
+<table id="cadastros-table" class="display">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nome</th>
+      <th>Data de Nascimento</th>
+      <th>Email</th>
+      <th>País de Trabalho</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for usuario in usuarios %}
+    <tr>
+      <td>{{ usuario.id }}</td>
+      <td>{{ usuario.nome }}</td>
+      <td class="data-nascimento">{{ usuario.data_nascimento|date:"d, F, Y" }}</td>
+      <td>{{ usuario.email }}</td>
+      <td>{{ usuario.pais_trabalho }}</td>
+      <td class="acoes">
+        <a href="{% url 'atualizar_cadastro' usuario.id %}" class="w3-button w3-blue update-button">Atualizar</a>
+        <button onclick="showConfirmMessage('{{ usuario.id }}')" class="w3-button w3-red delete-button deletar">Deletar</button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'index' %}" style="color: #fff; text-align: center; display: block; margin-top: 20px;">Voltar para Página Inicial</a>
+
+<div id="delete-confirm" class="delete-confirm-message">
+  <div class="confirm-content">
+    <p>Você tem certeza que deseja excluir este cadastro?</p>
+    <button class="acoes yes" onclick="deleteUser()">Sim</button>
+    <button class="acoes cancel" onclick="hideConfirmMessage()">Cancelar</button>
+  </div>
+</div>
+
+<div id="success-message" class="success-message"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script>
+$(document).ready(function() {
+  $('#cadastros-table').DataTable({
+    "language": {
+      "sEmptyTable": "Nenhum registro encontrado",
+      "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+      "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+      "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+      "sInfoPostFix": "",
+      "sInfoThousands": ".",
+      "sLengthMenu": "_MENU_ resultados por página",
+      "sLoadingRecords": "Carregando...",
+      "sProcessing": "Processando...",
+      "sZeroRecords": "Nenhum registro encontrado",
+      "sSearch": "Pesquisar",
+      "oPaginate": {
+        "sNext": "Próximo",
+        "sPrevious": "Anterior",
+        "sFirst": "Primeiro",
+        "sLast": "Último"
+      },
+      "oAria": {
+        "sSortAscending": ": Ordenar colunas de forma ascendente",
+        "sSortDescending": ": Ordenar colunas de forma descendente"
+      },
+      "select": {
+        "rows": {
+          "_": "Selecionado %d linhas",
+          "0": "Nenhuma linha selecionada",
+          "1": "Selecionado 1 linha"
+        }
+      }
+    }
+  });
+
+  // Formatação da data de nascimento
+  $('.data-nascimento').each(function() {
+    var dataNascimento = $(this).text();
+    var partesData = dataNascimento.split(',');
+    var dataFormatada = partesData[0] + ', ' + partesData[1].trim() + ', ' + partesData[2];
+    $(this).text(dataFormatada);
+  });
+});
+
+function showConfirmMessage(id) {
+  $('#delete-confirm').show();
+  $('#delete-confirm').data('cadastro-id', id);
+}
+
+function hideConfirmMessage() {
+  $('#delete-confirm').hide();
+}
+
+function showSuccessMessage(message) {
+  var successMessage = $('#success-message');
+  successMessage.text(message);
+  successMessage.show();
+  setTimeout(function() {
+    successMessage.hide();
+  }, 3000);
+}
+
+function deleteUser() {
+    var id = $('#delete-confirm').data('cadastro-id');
+    fetch('/deletar/' + id + '/', {
+        method: 'DELETE',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            showSuccessMessage('Cadastro excluído com sucesso!');
+            hideConfirmMessage();
+            setTimeout(function() {
+                window.location.reload(); // Recarrega a página para refletir as alterações
+            }, 2000); // Tempo de espera antes de recarregar a página (2 segundos)
+        } else {
+            throw new Error('Ocorreu um erro ao excluir o cadastro');
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        alert(error.message);
+    });
+}
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bem-vindo ao GlobalTalent Connect</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+<style>
+  /* Estilos personalizados */
+  body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: #fff; /* Definindo a cor do texto como branco */
+  }
+  .w3-container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  /* Estilo para tornar a lista mais visível */
+  table {
+    background-color: rgba(255, 255, 255, 0.1); /* Cor de fundo com transparência */
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #333;
+  }
+  .navigation-button {
+    display: inline-block;
+    margin-right: 10px; /* Ajuste a margem entre os botões */
+    margin-bottom: 10px; /* Ajuste a margem inferior para alinhamento vertical */
+  }
+  .update-button, .delete-button {
+    display: inline-block;
+  }
+  .delete-confirm-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    color: #000;
+    border-radius: 10px;
+    z-index: 9999;
+    display: none;
+    font-size: 18px;
+    text-align: center; /* Centralizar o texto */
+  }
+  .delete-confirm-message button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  .delete-confirm-message button.yes {
+    background-color: green;
+    color: #fff;
+  }
+  .delete-confirm-message button.cancel {
+    background-color: red;
+    color: #fff;
+  }
+  .success-message {
+    background-color: green;
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    display: none;
+    border-radius: 15px;
+    font-size: 24px;
+  }
+  /* Estilo para o link de voltar para a página inicial */
+  .back-to-home {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+</style>
+</head>
+<body class="w3-content" style="max-width:1300px">
+
+<div class="w3-row" style="height: 100vh;">
+  <div class="w3-container w3-black w3-center content-container" style="height: 100%;">
+    <div class="w3-padding-64">
+      <h1>Bem-vindo(a) ao GlobalTalent Connect</h1>
+    </div>
+    <div class="w3-padding-64">
+      <a href="criar_cadastro.html" class="w3-button w3-black w3-hover-blue-grey w3-padding-16 navigation-button">Criar Cadastro</a>
+      <a href="pesquisar_cadastro.html" class="w3-button w3-black w3-hover-brown w3-padding-16 navigation-button">Atualizar Cadastro</a>
+      <a href="pesquisar_cadastro.html" class="w3-button w3-black w3-hover-dark-grey w3-padding-16 navigation-button">Deletar Cadastro</a>
+      <a href="{% url 'pesquisar_cadastros' %}" class="w3-button w3-black w3-hover-brown w3-padding-16 navigation-button">Pesquisar Cadastros</a>
+    </div>
+
+    <h1 id="last-cadastros" style="margin-top: 50px;">Últimos 10 Cadastros Efetuados</h1>
+
+    <table>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Data de Nascimento</th>
+        <th>Email</th>
+        <th>País de Trabalho</th>
+        <th>Ações</th>
+      </tr>
+      {% for usuario in ultimos_usuarios %}
+      <tr>
+        <td>{{ usuario.id }}</td>
+        <td>{{ usuario.nome }}</td>
+        <td>{{ usuario.data_nascimento }}</td>
+        <td>{{ usuario.email }}</td>
+        <td>{{ usuario.pais_trabalho }}</td>
+        <td class="action-buttons">
+          <a href="{% url 'atualizar_cadastro' usuario.id %}" class="w3-button w3-blue update-button">Atualizar</a>
+          <button onclick="showConfirmMessage('{{ usuario.id }}')" class="w3-button w3-red delete-button">Deletar</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<div id="delete-confirm" class="delete-confirm-message">
+    <p>Você tem certeza que deseja excluir este cadastro?</p>
+    <button onclick="deleteUser()" class="w3-button yes">Sim</button>
+    <button onclick="hideConfirmMessage()" class="w3-button cancel">Cancelar</button>
+</div>
+
+<div id="success-message" class="success-message"></div>
+
+<script>
+  var userIdToDelete; // Variável global para armazenar o ID do usuário a ser excluído
+
+  function showConfirmMessage(userId) {
+      userIdToDelete = userId; // Armazena o ID do usuário na variável global
+      var confirmMessage = document.getElementById('delete-confirm');
+      confirmMessage.style.display = 'block';
+  }
+
+  function hideConfirmMessage() {
+      var confirmMessage = document.getElementById('delete-confirm');
+      confirmMessage.style.display = 'none';
+  }
+
+  function showSuccessMessage(message) {
+      var successMessage = document.getElementById('success-message');
+      successMessage.textContent = message;
+      successMessage.style.display = 'block';
+      setTimeout(function() {
+          successMessage.style.display = 'none';
+      }, 3000); // 3 segundos
+  }
+
+  function deleteUser() {
+      fetch('/deletar/' + userIdToDelete + '/', {
+          method: 'DELETE',
+          headers: {
+              'X-CSRFToken': getCookie('csrftoken')
+          }
+      })
+      .then(response => {
+          if (response.ok) {
+              showSuccessMessage('Cadastro excluído com sucesso!');
+              hideConfirmMessage();
+              setTimeout(function() {
+                  window.location.href = "/";
+              }, 4000);
+          } else {
+              throw new Error('Ocorreu um erro ao excluir o cadastro');
+          }
+      })
+      .catch(error => {
+          console.error(error);
+          alert(error.message);
+      });
+  }
+
+  function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+      $('#last-cadastros').DataTable(); // Inicializando o plugin DataTables para a tabela
+  });
+
+</script>
+
+</body>
+</html>

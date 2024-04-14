@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizar Cadastro</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+        }
+        .w3-container {
+            padding-left: 0;
+            padding-right: 0;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 10px;
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .form-container input[type="text"],
+        .form-container input[type="email"],
+        .form-container input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+        }
+        .form-container button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px; /* Tamanho da fonte */
+            font-family: Arial, sans-serif; /* Fonte */
+        }
+        .form-container button[type="submit"] {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+        }
+        .form-container .w3-button {
+            margin-right: 10px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px; /* Tamanho da fonte */
+            font-family: Arial, sans-serif; /* Fonte */
+            background-color: #007bff; /* Cor azul */
+            color: #fff;
+            text-decoration: none;
+        }
+        /* Estilos para a mensagem de sucesso */
+        .success-message {
+            background-color: #4CAF50; /* Verde */
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 999;
+            display: none; /* Inicialmente oculto */
+        }
+    </style>
+</head>
+<body class="w3-content" style="max-width:1300px">
+
+<!-- Formulário de Atualização de Cadastro -->
+<div class="w3-row" style="height: 100vh;">
+  <div class="w3-container w3-black w3-center" style="height: 100%;">
+    <div class="form-container">
+      <h2>Atualizar Cadastro</h2>
+      <form id="atualizacao-form" method="post" action="">
+        {% csrf_token %}
+        <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+        
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" value="{{ usuario.nome }}" required><br>
+        
+        <label for="data_nascimento">Data de Nascimento:</label>
+        <input type="date" id="data_nascimento" name="data_nascimento" value="{{ usuario.data_nascimento }}" required><br>
+        
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" value="{{ usuario.email }}" required><br>
+        
+        <label for="pais_trabalho">País de Trabalho:</label>
+        <input type="text" id="pais_trabalho" name="pais_trabalho" value="{{ usuario.pais_trabalho }}" required><br>
+
+        <button type="submit" class="w3-button w3-green">Salvar</button>
+        <a href="{% url 'index' %}" class="w3-button">Voltar</a>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div id="success-message" class="success-message">
+    Cadastro atualizado com sucesso!
+</div>
+
+<script>
+    document.getElementById("atualizacao-form").addEventListener("submit", function(event){
+        event.preventDefault();
+        
+        // Exibe a mensagem de sucesso
+        var successMessage = document.getElementById("success-message");
+        successMessage.style.display = "block";
+
+        setTimeout(function(){
+            successMessage.style.display = "none";
+        }, 3000);
+
+        setTimeout(function(){
+            document.getElementById("atualizacao-form").submit();
+        }, 2000);
+    });
+</script>
+
+</body>
+</html>
