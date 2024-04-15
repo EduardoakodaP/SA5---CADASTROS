@@ -20,10 +20,10 @@
     margin-top: 20px;
   }
   table {
-    background-color: rgba(255, 255, 255, 0.1); /* Fundo da tabela em preto */
+    background-color: rgba(255, 255, 255, 0.1); 
     border-collapse: collapse;
     width: 100%;
-    color: #000; /* Texto dentro da tabela em preto */
+    color: #000; 
     margin-top: 20px;
   }
   th, td {
@@ -33,7 +33,7 @@
   }
   th {
     background-color: #333;
-    color: #fff; /* Cor dos cabeçalhos da tabela em branco */
+    color: #fff;
   }
   .acoes {
     text-align: center;
@@ -89,8 +89,8 @@
     z-index: 9999;
     display: none;
     font-size: 18px;
-    text-align: center; /* Centralizar o texto */
-    border: 2px solid #000; /* Adiciona borda preta */
+    text-align: center; 
+    border: 2px solid #000; 
   }
   .delete-confirm-message .confirm-content {
     padding: 10px; /* Adiciona espaço interno */
@@ -241,8 +241,8 @@ function deleteUser() {
             showSuccessMessage('Cadastro excluído com sucesso!');
             hideConfirmMessage();
             setTimeout(function() {
-                window.location.reload(); // Recarrega a página para refletir as alterações
-            }, 2000); // Tempo de espera antes de recarregar a página (2 segundos)
+                window.location.reload(); 
+            }, 2000); 
         } else {
             throw new Error('Ocorreu um erro ao excluir o cadastro');
         }

@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             background-color: #000;
-            font-family: Arial, sans-serif; /* Adicionado */
+            font-family: Arial, sans-serif;
             height: 100%;
         }
         .w3-container {
@@ -59,7 +59,7 @@
             border: none;
         }
         .form-container .w3-button {
-            background-color: #2196F3; /* Azul padrão */
+            background-color: #2196F3; 
             color: #fff;
             border: none;
             text-decoration: none;
@@ -69,17 +69,16 @@
             cursor: pointer;
         }
         .form-container .w3-button:hover {
-            background-color: #1976D2; /* Azul mais escuro no hover */
+            background-color: #1976D2; 
         }
         .form-container .w3-button.green {
-            background-color: #4CAF50; /* Verde */
+            background-color: #4CAF50; 
         }
         .form-container .w3-button.red {
-            background-color: #f44336; /* Vermelho */
+            background-color: #f44336; 
         }
-        /* Estilos para a mensagem de sucesso */
         .success-message {
-            background-color: #4CAF50; /* Verde */
+            background-color: #4CAF50; 
             color: #fff;
             padding: 20px;
             border-radius: 10px;
@@ -88,7 +87,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 999;
-            display: none; /* Inicialmente oculto */
+            display: none; 
         }
     </style>
 </head>
@@ -131,12 +130,10 @@
         var successMessage = document.getElementById("success-message");
         successMessage.style.display = "block";
 
-        // Esconde a mensagem de sucesso após 3 segundos
         setTimeout(function(){
             successMessage.style.display = "none";
         }, 4000);
 
-        // Submete o formulário após 1 segundos
         setTimeout(function(){
             document.getElementById("cadastro-form").submit();
         }, 2000);

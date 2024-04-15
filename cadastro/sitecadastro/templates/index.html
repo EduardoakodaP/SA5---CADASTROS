@@ -7,20 +7,18 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
 <style>
-  /* Estilos personalizados */
   body, html {
     margin: 0;
     padding: 0;
     background-color: #000;
-    color: #fff; /* Definindo a cor do texto como branco */
+    color: #fff; 
   }
   .w3-container {
     padding-left: 0;
     padding-right: 0;
   }
-  /* Estilo para tornar a lista mais visível */
   table {
-    background-color: rgba(255, 255, 255, 0.1); /* Cor de fundo com transparência */
+    background-color: rgba(255, 255, 255, 0.1); 
     border-collapse: collapse;
     width: 100%;
   }
@@ -34,8 +32,8 @@
   }
   .navigation-button {
     display: inline-block;
-    margin-right: 10px; /* Ajuste a margem entre os botões */
-    margin-bottom: 10px; /* Ajuste a margem inferior para alinhamento vertical */
+    margin-right: 10px; 
+    margin-bottom: 10px; 
   }
   .update-button, .delete-button {
     display: inline-block;
@@ -52,7 +50,7 @@
     z-index: 9999;
     display: none;
     font-size: 18px;
-    text-align: center; /* Centralizar o texto */
+    text-align: center;
   }
   .delete-confirm-message button {
     padding: 10px 20px;
@@ -82,7 +80,6 @@
     border-radius: 15px;
     font-size: 24px;
   }
-  /* Estilo para o link de voltar para a página inicial */
   .back-to-home {
     text-align: center;
     margin-top: 20px;
@@ -145,10 +142,10 @@
 <div id="success-message" class="success-message"></div>
 
 <script>
-  var userIdToDelete; // Variável global para armazenar o ID do usuário a ser excluído
+  var userIdToDelete;
 
   function showConfirmMessage(userId) {
-      userIdToDelete = userId; // Armazena o ID do usuário na variável global
+      userIdToDelete = userId; 
       var confirmMessage = document.getElementById('delete-confirm');
       confirmMessage.style.display = 'block';
   }
@@ -164,7 +161,7 @@
       successMessage.style.display = 'block';
       setTimeout(function() {
           successMessage.style.display = 'none';
-      }, 3000); // 3 segundos
+      }, 3000);
   }
 
   function deleteUser() {
@@ -207,7 +204,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function() {
-      $('#last-cadastros').DataTable(); // Inicializando o plugin DataTables para a tabela
+      $('#last-cadastros').DataTable();
   });
 
 </script>
